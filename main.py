@@ -46,6 +46,12 @@ def checkSpaces():
     cvzone.putTextRect(img, f'Free: {spaces}/{len(posList)}', (50, 60), thickness=3, offset=20,
                        colorR=(0, 200, 0))
 
+def process(image, joint_image):
+    filtered = cv2.ximgproc.jointBilateralFilter(src=image, joint=joint_image, d=9, sigmaColor=9, sigmaSpace=7)
+    filtered = np.float32(filtered) / 255.0
+    filtered = np.uint8(cv2.normalize(filtered, None, 0, 255, cv2.NORM_MINMAX))
+    filtered = cv2.cvtColor(filtered, cv2.COLOR_GRAY2RGB)
+    return filtered
 
 while True:
 
@@ -55,8 +61,9 @@ while True:
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
     # img = cv2.imread('img.png')
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    imgBlur = cv2.GaussianBlur(imgGray, (3, 3), 1)
-    # ret, imgThres = cv2.threshold(imgBlur, 150, 255, cv2.THRESH_BINARY)
+    imgBlur = cv2.GaussianBlur(imgGray, (5, 5), 1)
+    imgHomomorphic = process(imgGray, imgGray)
+    ret, imgThres = cv2.threshold(imgBlur, 150, 255, cv2.THRESH_BINARY)
 
     val1 = cv2.getTrackbarPos("Val1", "Vals")
     val2 = cv2.getTrackbarPos("Val2", "Vals")
@@ -73,7 +80,7 @@ while True:
     # Display Output
 
     cv2.imshow("Image", img)
-    # cv2.imshow("ImageGray", imgThres)
+    cv2.imshow("ImageGray", imgThres)
     # cv2.imshow("ImageBlur", imgBlur)
     key = cv2.waitKey(1)
     if key == ord('r'):
