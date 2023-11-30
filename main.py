@@ -29,7 +29,7 @@ def checkSpaces():
         imgCrop = imgThres[y:y + h, x:x + w]
         count = cv2.countNonZero(imgCrop)
 
-        if count < 900:
+        if count < 600:
             color = (0, 200, 0)
             thic = 5
             spaces += 1
@@ -80,7 +80,7 @@ while True:
     # Display Output
 
     cv2.imshow("Image", img)
-    cv2.imshow("ImageGray", imgThres)
+    # cv2.imshow("ImageGray", imgThres)
     # cv2.imshow("ImageBlur", imgBlur)
     key = cv2.waitKey(1)
     if key == ord('r'):
